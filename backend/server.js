@@ -1,7 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv").config();
 const connectDb = require("./config/dbConnection");
-const workoutRoutes = require("./routes/workouts");
+const workoutRoutes = require("./routes/workoutRoute");
 
 connectDb()
 
