@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import WorkoutDetails from "../components/WorkoutDetails";
+import WorkoutForm from "../components/WorkoutForm";
+import Spinner from "../components/Spinner";
 
 const Home = () => {
   const [workouts, setWorkouts] = useState([]);
@@ -24,7 +26,7 @@ const Home = () => {
     <>
       <h2>Welcome to the Workout Tracker!</h2>
       {isLoading ? (
-        <p>Loading...</p>
+        <Spinner />
       ) : (
         <div className="home">
           <div className="workouts">
@@ -33,6 +35,7 @@ const Home = () => {
                 <WorkoutDetails key={workout._id} workout={workout} />
               ))}
           </div>
+          <WorkoutForm />
         </div>
       )}
     </>
