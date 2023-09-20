@@ -1,15 +1,16 @@
+const asyncHandler = require("express-async-handler");
 const mongoose = require("mongoose");
 const Workout = require("../models/workoutModel");
 
 // GET all workouts
-const getWorkouts = async (req, res) => {
+const getWorkouts = asyncHandler(async (req, res) => {
   const workouts = await Workout.find({}).sort({ createdAt: -1 });
 
   res.status(200).json(workouts);
-};
+});
 
 // GET a single workout
-const getWorkout = async (req, res) => {
+const getWorkout = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -23,10 +24,10 @@ const getWorkout = async (req, res) => {
   }
 
   res.status(200).json(workout);
-};
+});
 
 // CREATE a new workout
-const createWorkout = async (req, res) => {
+const createWorkout = asyncHandler(async (req, res) => {
   const { title, load, reps } = req.body;
   try {
     const workout = await Workout.create({ title, load, reps });
@@ -34,10 +35,10 @@ const createWorkout = async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-};
+});
 
 // UPDATE a workout
-const updateWorkout = async (req, res) => {
+const updateWorkout = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -48,17 +49,18 @@ const updateWorkout = async (req, res) => {
     { _id: id },
     {
       ...req.body,
-    }
+    },
+    { new: true }
   );
   if (!workout) {
     return res.status(400).json({ error: "No such workout" });
   }
 
   res.status(200).json(workout);
-};
+});
 
 // DELETE a workout
-const deleteWorkout = async (req, res) => {
+const deleteWorkout = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -72,7 +74,7 @@ const deleteWorkout = async (req, res) => {
   }
 
   res.status(200).json(workout);
-};
+});
 
 module.exports = {
   createWorkout,
