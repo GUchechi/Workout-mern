@@ -4,9 +4,12 @@ const Workout = require("../models/workoutModel");
 
 // GET all workouts
 const getWorkouts = asyncHandler(async (req, res) => {
-  const workouts = await Workout.find({}).sort({ createdAt: -1 });
-
-  res.status(200).json(workouts);
+  try {
+    const workouts = await Workout.find({}).sort({ createdAt: -1 });
+    res.status(200).json(workouts);
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 // GET a single workout
