@@ -1,12 +1,8 @@
-import { format } from "date-fns";
+import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import { useWorkoutsContext } from "../hooks/useWorkoutContext";
 
 const WorkoutDetails = ({ workout }) => {
   const { dispatch } = useWorkoutsContext();
-
-  // Parse the ISO date string into a Date object
-  const createdAtDate = new Date(workout.createdAt);
-  const formattedDate = format(createdAtDate, "MMM dd, yyyy hh:mmaa");
 
   const handleClick = async () => {
     const response = await fetch("/api/workouts/" + workout._id, {
@@ -31,8 +27,12 @@ const WorkoutDetails = ({ workout }) => {
         <strong>Number of reps: </strong>
         {workout.reps}
       </p>
-      <p>{formattedDate}</p>
-      <span onClick={handleClick}>Delete</span>
+      <p>
+        {formatDistanceToNow(new Date(workout.createdAt), { addSuffix: true })}
+      </p>
+      <span className="material-symbols-outlined" onClick={handleClick}>
+        Delete
+      </span>
     </div>
   );
 };
