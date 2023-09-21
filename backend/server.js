@@ -2,8 +2,9 @@ const express = require("express");
 const dotenv = require("dotenv").config();
 const connectDb = require("./config/dbConnection");
 const workoutRoutes = require("./routes/workoutRoute");
+const userRoutes = require("./routes/userRoute");
 
-connectDb()
+connectDb();
 
 const PORT = process.env.PORT || 4000;
 
@@ -20,6 +21,7 @@ app.use((req, res, next) => {
 
 // routes
 app.use("/api/workouts", workoutRoutes);
+app.use("/api/user", userRoutes);
 
 // Listen for request
 app.listen(PORT, () => {

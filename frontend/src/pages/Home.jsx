@@ -8,6 +8,7 @@ const Home = () => {
   const { workouts, dispatch } = useWorkoutsContext();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchInput, setSearchInput] = useState("");
 
   useEffect(() => {
     const fetchWorkouts = async () => {
@@ -32,9 +33,24 @@ const Home = () => {
     fetchWorkouts();
   }, [dispatch]);
 
+  // Filter workouts based on the search Input
+  const filteredWorkouts = workouts
+    ? workouts.filter((workout) =>
+        workout.title.toLowerCase().includes(searchInput.toLowerCase())
+      )
+    : [];
+
   return (
     <>
       <h2>Welcome to the Workout Tracker!</h2>
+      <div className="search-input">
+        <input
+          type="text"
+          placeholder="Search workouts"
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+        />
+      </div>
       {isLoading ? (
         <Spinner />
       ) : error ? (
@@ -42,10 +58,9 @@ const Home = () => {
       ) : (
         <div className="home">
           <div className="workouts">
-            {workouts &&
-              workouts.map((workout) => (
-                <WorkoutDetails key={workout._id} workout={workout} />
-              ))}
+            {filteredWorkouts.map((workout) => (
+              <WorkoutDetails key={workout._id} workout={workout} />
+            ))}
           </div>
           <WorkoutForm />
         </div>
