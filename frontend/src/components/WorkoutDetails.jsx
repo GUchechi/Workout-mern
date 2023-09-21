@@ -1,10 +1,18 @@
+import { useState } from "react";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import { useWorkoutsContext } from "../hooks/useWorkoutContext";
+import DeleteConfirmationModal from "./Modal";
 
 const WorkoutDetails = ({ workout }) => {
   const { dispatch } = useWorkoutsContext();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleClick = async () => {
+  const handleClick = () => {
+    // Show the delete confirmation modal
+    setIsModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
     const response = await fetch("/api/workouts/" + workout._id, {
       method: "DELETE",
     });
@@ -14,6 +22,14 @@ const WorkoutDetails = ({ workout }) => {
     if (response.ok) {
       dispatch({ type: "DELETE_WORKOUT", payload: data });
     }
+
+    // Close the modal after delete
+    setIsModalOpen(false);
+  };
+
+  const handleCancelDelete = () => {
+    // Close the modal without deleting
+    setIsModalOpen(false);
   };
 
   return (
@@ -33,6 +49,12 @@ const WorkoutDetails = ({ workout }) => {
       <span className="material-symbols-outlined" onClick={handleClick}>
         Delete
       </span>
+
+      <DeleteConfirmationModal
+        isOpen={isModalOpen}
+        onCancel={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   );
 };
