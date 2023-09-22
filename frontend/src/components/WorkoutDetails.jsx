@@ -2,12 +2,18 @@ import { useState } from "react";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import { useWorkoutsContext } from "../hooks/useWorkoutContext";
 import DeleteConfirmationModal from "./Modal";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 const WorkoutDetails = ({ workout }) => {
   const { dispatch } = useWorkoutsContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { user } = useAuthContext();
 
   const handleClick = () => {
+    if (!user) {
+      return;
+    }
+
     // Show the delete confirmation modal
     setIsModalOpen(true);
   };
@@ -15,6 +21,9 @@ const WorkoutDetails = ({ workout }) => {
   const handleConfirmDelete = async () => {
     const response = await fetch("/api/workouts/" + workout._id, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
     });
 
     const data = await response.json();

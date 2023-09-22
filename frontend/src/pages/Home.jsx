@@ -3,37 +3,42 @@ import WorkoutDetails from "../components/WorkoutDetails";
 import WorkoutForm from "../components/WorkoutForm";
 import Spinner from "../components/Spinner";
 import { useWorkoutsContext } from "../hooks/useWorkoutContext";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 const Home = () => {
   const { workouts, dispatch } = useWorkoutsContext();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchInput, setSearchInput] = useState("");
+  const { user } = useAuthContext();
 
   useEffect(() => {
     const fetchWorkouts = async () => {
+      setIsLoading(true);
       try {
-        const response = await fetch("/api/workouts");
+        const response = await fetch("/api/workouts", {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
 
         if (!response.ok) {
           throw new Error("Failed to fetch workouts");
         }
 
         const data = await response.json();
-
-        if (response.ok) {
-          dispatch({ type: "SET_WORKOUTS", payload: data });
-        }
+        dispatch({ type: "SET_WORKOUTS", payload: data });
+        setIsLoading(false);
       } catch (error) {
         setError(error.message || "An error occurred");
-      } finally {
-        setIsLoading(false);
       }
     };
-    fetchWorkouts();
-  }, [dispatch]);
 
-  // Filter workouts based on the search Input
+    if (user) {
+      fetchWorkouts();
+    }
+  }, [dispatch, user]);
+
   const filteredWorkouts = workouts
     ? workouts.filter((workout) =>
         workout.title.toLowerCase().includes(searchInput.toLowerCase())
