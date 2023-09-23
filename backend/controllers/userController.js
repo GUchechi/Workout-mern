@@ -8,7 +8,7 @@ const createToken = (_id) => {
 };
 
 // login a user
-const loginUser = async (req, res) => {
+const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -21,7 +21,7 @@ const loginUser = async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-};
+});
 
 // signup user
 const signupUser = asyncHandler(async (req, res) => {

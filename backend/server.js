@@ -22,7 +22,7 @@ app.use((req, res, next) => {
 // routes
 app.use("/api/workouts", workoutRoutes);
 app.use("/api/user", userRoutes);
- 
+
 // Listen for request
 app.listen(PORT, () => {
   console.log(`listening on port: ${PORT}`);

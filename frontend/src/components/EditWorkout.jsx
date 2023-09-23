@@ -1,29 +1,52 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useWorkoutsContext } from "../hooks/useWorkoutContext";
 import { useAuthContext } from "../hooks/useAuthContext";
 
-const WorkoutForm = () => {
+const EditWorkout = () => {
   const { dispatch } = useWorkoutsContext();
   const [title, setTitle] = useState("");
   const [load, setLoad] = useState("");
   const [reps, setReps] = useState("");
   const [error, setError] = useState(null);
   const [emptyFields, setEmptyFields] = useState([]);
+  const navigate = useNavigate();
+  const { id } = useParams();
   const { user } = useAuthContext();
 
-  const handleSubmit = async (e) => {
+  // Fetch the current workout data when the component mounts
+  useEffect(() => {
+    const fetchWorkoutData = async () => {
+      try {
+        const response = await fetch("/api/workouts/" + id, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch workout data");
+        }
+        const data = await response.json();
+        // Set the state with the current values
+        setTitle(data.title);
+        setLoad(data.load);
+        setReps(data.reps);
+      } catch (error) {
+        console.error(error);
+        // Handle error
+      }
+    };
+
+    fetchWorkoutData();
+  }, [id, user.token]);
+
+  const handleEdit = async (e) => {
     e.preventDefault();
+    const updatedWorkout = { title, load, reps };
 
-    if (!user) {
-      setError("Please login to add workouts");
-      return;
-    }
-
-    const workout = { title, load, reps };
-
-    const response = await fetch("/api/workouts", {
-      method: "POST",
-      body: JSON.stringify(workout),
+    const response = await fetch("/api/workouts/" + id, {
+      method: "PATCH",
+      body: JSON.stringify(updatedWorkout),
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${user.token}`,
@@ -41,16 +64,17 @@ const WorkoutForm = () => {
       setLoad("");
       setReps("");
       setEmptyFields([]);
-      console.log("new workout added:", data);
-      dispatch({ type: "CREATE_WORKOUT", payload: data });
+      console.log("Workout Edited:", data);
+      dispatch({ type: "EDIT_WORKOUT", payload: data });
+      navigate(`/`);
     }
   };
 
   return (
-    <form className="create" onSubmit={handleSubmit}>
-      <h3>Add a New Workout</h3>
+    <form className="edit__create" onSubmit={handleEdit}>
+      <h3>Edit Workout</h3>
 
-      <label>Workout Title:</label>
+      <label>Edit Title:</label>
       <input
         type="text"
         onChange={(e) => setTitle(e.target.value)}
@@ -74,10 +98,10 @@ const WorkoutForm = () => {
         className={emptyFields.includes("reps") ? "error" : ""}
       />
 
-      <button>Add Workout</button>
+      <button>Edit Workout</button>
       {error && <div className="error">{error}</div>}
     </form>
   );
 };
 
-export default WorkoutForm;
+export default EditWorkout;

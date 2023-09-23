@@ -67,6 +67,18 @@ header a {
   color: #333;
 }
 
+.workout-details .edit__span {
+  position: absolute;
+  top: 20px;
+  right: 5rem;
+  cursor: pointer;
+  background: #f1f1f1;
+  padding: 6px;
+  border-radius: 50%;
+  color: #333;
+  text-decoration: none;
+}
+
 /* new workout form */
 label,
 input {
@@ -218,7 +230,7 @@ nav button {
 
 /* auth forms */
 form.signup,
-form.login {
+form.login, .edit__create {
   max-width: 400px;
   margin: 40px auto;
   padding: 20px;

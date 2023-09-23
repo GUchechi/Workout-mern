@@ -1,5 +1,3 @@
-import React from "react";
-
 const DeleteConfirmationModal = ({ isOpen, onCancel, onConfirm }) => {
   if (!isOpen) {
     return null;

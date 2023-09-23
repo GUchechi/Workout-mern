@@ -3,10 +3,12 @@ import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import { useWorkoutsContext } from "../hooks/useWorkoutContext";
 import DeleteConfirmationModal from "./Modal";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { Link } from "react-router-dom";
 
 const WorkoutDetails = ({ workout }) => {
   const { dispatch } = useWorkoutsContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const { user } = useAuthContext();
 
   const handleClick = () => {
@@ -55,6 +57,13 @@ const WorkoutDetails = ({ workout }) => {
       <p>
         {formatDistanceToNow(new Date(workout.createdAt), { addSuffix: true })}
       </p>
+
+      <Link
+        to={`/edit/${workout._id}`}
+        className="edit__span material-symbols-outlined"
+      >
+        Edit
+      </Link>
       <span className="material-symbols-outlined" onClick={handleClick}>
         Delete
       </span>
